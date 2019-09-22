@@ -1,0 +1,105 @@
+buildscript {
+    ext {
+        junitVersion = '5.3.1'
+    }
+}
+
+plugins {
+    id 'java-library'
+    id 'idea'
+    id 'maven-publish'
+}
+
+group 'com.silaev.graphs'
+version '0.0.1'
+
+repositories {
+    mavenCentral()
+}
+
+compileJava {
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
+
+    options.encoding = 'UTF-8'
+    options.compilerArgs << "-Xlint:deprecation"
+}
+
+compileTestJava {
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
+
+    options.encoding = 'UTF-8'
+    options.compilerArgs << "-Xlint:deprecation"
+}
+
+test {
+    useJUnitPlatform()
+
+    testLogging.showStandardStreams = true
+    testLogging.exceptionFormat = 'full'
+}
+
+wrapper {
+    gradleVersion = '5.4.1'
+    distributionType = Wrapper.DistributionType.BIN
+}
+
+task sourcesJar(type: Jar) {
+    from sourceSets.main.allJava
+    archiveClassifier = 'sources'
+}
+
+task javadocJar(type: Jar) {
+    from javadoc
+    archiveClassifier = 'javadoc'
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            from components.java
+            artifact sourcesJar
+            artifact javadocJar
+
+            pom {
+                name = 'Graphs'
+                description = 'Library to perform search between 2 nodes in an unweighted graph'
+                url = 'https://github.com/silaev/graphs'
+
+                licenses {
+                    license {
+                        name = 'MIT'
+                        url = 'http://opensource.org/licenses/MIT'
+                    }
+                }
+                developers {
+                    developer {
+                        id = 'silaev'
+                        name = 'Konstantin Silaev'
+                        email = 'jsilaev256@gmail.com'
+                    }
+                }
+                scm {
+                    url = 'https://github.com/silaev/graphs/'
+                    connection = 'scm:git:git://github.com/silaev/graphs.git'
+                    developerConnection = 'scm:git:ssh://git@github.com/silaev/graphs.git'
+                }
+            }
+        }
+    }
+
+    repositories {
+        maven {
+            mavenLocal()
+        }
+    }
+}
+
+dependencies {
+    testImplementation("org.junit.jupiter:junit-jupiter-api:${junitVersion}")
+    testCompile("org.junit.jupiter:junit-jupiter-params:${junitVersion}")
+    testRuntime("org.junit.jupiter:junit-jupiter-engine:${junitVersion}")
+    testCompile group: 'org.hamcrest', name: 'hamcrest-library', version: '2.1'
+    testCompile group: 'org.mockito', name: 'mockito-core', version: '3.0.0'
+}
