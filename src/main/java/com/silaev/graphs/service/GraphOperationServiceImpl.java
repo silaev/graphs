@@ -136,7 +136,9 @@ public class GraphOperationServiceImpl<T> implements GraphOperationService<T> {
             }
         }
 
-        return Collections.emptyList();
+        return Collections.unmodifiableList(
+            Collections.emptyList()
+        );
     }
 
     private List<Edge<T>> preparePairEdges(final List<Node<T>> pathToNode) {
@@ -147,8 +149,12 @@ public class GraphOperationServiceImpl<T> implements GraphOperationService<T> {
                     pathToNode.get(i).getData()
                 )
             )
-            .collect(Collectors.toList());
-
+            .collect(
+                Collectors.collectingAndThen(
+                    Collectors.toList(),
+                    Collections::unmodifiableList
+                )
+            );
     }
 
     Node<T> findByUserDataOrThrowException(final T vertex) {
